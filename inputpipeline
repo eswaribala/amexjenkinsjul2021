@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+    
+    options {
+        timeout(time: 30, unit: 'MINUTES') 
+    }
+    stages {
+        stage('scm'){
+          steps{
+             checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'f768b3bb-8d24-48bb-b4eb-8bd6f252ad8e', url: 'https://github.com/eswaribala/hsbcdevopsnov2020.git']]])
+          }
+        }
+        stage('check_file'){
+            steps{
+                //sleep time: 1000, unit: 'NANOSECONDS'
+                fileExists 'C:/Users/Balasubramaniam/.jenkins/workspace/currencyapidemo/currencyapijenkins/src/main/java/com/boa/trading/currencyapi/CurrencyApiApplication.java'
+            }
+        }
+        stage('pwd'){
+            steps{
+               pwd()
+            }
+        }
+        
+         stage('Input') {
+            input {
+                message "Can we Proceed?"
+                ok "Yes"
+                submitter "RPS"
+                parameters {
+                    string(name: 'PERSON', defaultValue: 'RPS', description: 'Member')
+                }
+            }
+            steps {
+                echo "${PERSON}, is proceeding..."
+            }
+        }
+        
+        
+        
+    }
+}
